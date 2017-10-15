@@ -1,0 +1,19 @@
+<!doctype html>
+<title>Who's in?</title>
+<div>
+  <h1>Whos In?</h1>
+  <h4>Named devices</h4>
+  {% for dev in named_devices %}
+    <p>{{dev[1]}}, Last seen: {{dev[2]}}</p>
+  {% endfor %}
+  <h4>Other devices</h4>
+  {% for dev in devices %}
+      <p>{{dev[2]}} ({{dev[0]}}), Last seen: {{dev[1]}}</p>
+  {% endfor %}
+  <form action="/name_device" method="post">
+    <h4> Name a device </h4>
+    <p>Mac <input type="text" name="mac"></p>
+    <p>Name <input type="text" name="name"></p>
+    <input type="submit" value="Submit">
+  </form>
+</div>
