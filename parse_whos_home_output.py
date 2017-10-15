@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from typing import List, Tuple
 import time
 import argparse
 import sys
@@ -12,7 +11,7 @@ MAC_ADDRESS_REGEX = re.compile("{0}{0}:{0}{0}:{0}{0}:{0}{0}:{0}{0}:{0}{0}".forma
 
 DEVICE_INFO_REGEX = re.compile(r"\((.*)\)$")
 
-def create_db(conn : sqlite3.Connection):
+def create_db(conn):
     c = conn.cursor()
 
     # Create history table
@@ -41,7 +40,7 @@ CREATE TABLE names(
     # Save (commit) the changes
     conn.commit()
 
-def delete_db(conn : sqlite3.Connection):
+def delete_db(conn):
     c = conn.cursor()
     c.execute('''DROP TABLE logs''')
     c.execute('''DROP TABLE history''')
@@ -49,9 +48,9 @@ def delete_db(conn : sqlite3.Connection):
     conn.commit()
 
 def insert_data(
-    conn : sqlite3.Connection,
-    unixtime : int,
-    all_data : Tuple[str,str],
+    conn,
+    unixtime,
+    all_data,
     ):
         c = conn.cursor()
         c.executemany(
@@ -59,14 +58,14 @@ def insert_data(
             [(unixtime, d[0], d[1]) for d in all_data]
         )
 
-def cleanup_data(data:List[str]):
+def cleanup_data(data):
     data = [l for l in data if "MAC Address:" in l]
     for line in data:
         mac = MAC_ADDRESS_REGEX.search(line).group(0)
         info = DEVICE_INFO_REGEX.search(line).group(1)
         yield mac, info
 
-def main(db_name : str, should_create_db : bool):
+def main(db_name, should_create_db):
     exists = os.path.isfile(db_name)
     with sqlite3.connect(db_name) as conn:
         # Init the DB

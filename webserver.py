@@ -10,7 +10,7 @@ TIMEZONE = 'Europe/London'
 app = Flask(__name__)
 
 
-def unix_to_bst(timestamp : int):
+def unix_to_bst(timestamp):
     # get time in UTC
     utc_dt = datetime.utcfromtimestamp(timestamp).replace(tzinfo=pytz.utc)
     # convert it to tz
