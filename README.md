@@ -20,4 +20,4 @@ pip install sqlite3
 
 set up a CRON job to run `sudo ./whos_home.sh | python parse_whos_home_output.py` every 5 minutes or so.
 
-start the flask server with `python -m flask run`
+start the flask server with `export FLASK_APP=webserver.py; python -m flask run`
