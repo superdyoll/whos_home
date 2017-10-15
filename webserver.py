@@ -33,19 +33,24 @@ def close_connection(exception):
 def get_last_seens():
     return get_db().execute("""
 SELECT t1.*
-FROM history t1 LEFT JOIN history t2
-ON (t1.mac = t2.mac AND t1.unixdate < t2.unixdate)
-WHERE t2.unixdate IS NULL;
+FROM history t1
+    LEFT JOIN history t2
+        ON t1.mac = t2.mac
+        AND t1.unixdate < t2.unixdate
+    LEFT JOIN names 
+        ON t1.mac = names.mac
+WHERE t2.unixdate IS NULL and names.mac IS NULL
 """)
 
 def get_named_last_seens():
     return get_db().execute("""
 SELECT t1.*, names.name
 FROM history t1
-LEFT JOIN history t2
-ON (t1.mac = t2.mac AND t1.unixdate < t2.unixdate)
-JOIN names
-ON t1.mac = names.mac
+    LEFT JOIN history t2
+        ON t1.mac = t2.mac 
+        AND t1.unixdate < t2.unixdate
+    JOIN names
+        ON t1.mac = names.mac
 WHERE t2.unixdate IS NULL
 """)
 
