@@ -30,6 +30,14 @@ CREATE TABLE logs(
     error TEXT
 )''')
 
+    # Create names table
+    c.execute('''
+CREATE TABLE names(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mac TEXT NOT NULL,
+    name TEXT NOT NULL
+)''')
+
     # Save (commit) the changes
     conn.commit()
 
@@ -37,6 +45,7 @@ def delete_db(conn : sqlite3.Connection):
     c = conn.cursor()
     c.execute('''DROP TABLE logs''')
     c.execute('''DROP TABLE history''')
+    c.execute('''DROP TABLE names''')
     conn.commit()
 
 def insert_data(
