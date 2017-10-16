@@ -80,3 +80,7 @@ def name_device():
     add_device_name(mac, name)
     get_db().commit()
     return "<p>Successfully added</p>"
+
+
+if __name__ == '__main__':
+   app.run(host="0.0.0.0", port=80)
