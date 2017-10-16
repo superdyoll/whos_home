@@ -11,7 +11,7 @@ sudo apt-get install nmap
 sudo pip install virtualenv
 
 # Python packages
-virtualenv create venv
+virtualenv venv
 source venv/bin/activate
 pip install Flask
 pip install pytz
