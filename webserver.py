@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flask import Flask, g, render_template, request
+from flask import Flask, g, render_template, request, redirect
 import sqlite3
 import pytz
 from datetime import datetime
@@ -79,8 +79,8 @@ def name_device():
     name = request.form['name']
     add_device_name(mac, name)
     get_db().commit()
-    return "<p>Successfully added</p>"
+    return redirect("/", code=302)
 
 
 if __name__ == '__main__':
-   app.run(host="0.0.0.0", port=80)
+   app.run()
