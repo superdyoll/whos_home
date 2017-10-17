@@ -32,40 +32,37 @@ def close_connection(exception):
 
 def get_last_seens():
     return get_db().execute("""
-SELECT t1.*
-FROM history t1
-    LEFT JOIN history t2
-        ON t1.mac = t2.mac
-        AND t1.unixdate < t2.unixdate
-    LEFT JOIN names 
-        ON t1.mac = names.mac
-WHERE t2.unixdate IS NULL and names.mac IS NULL
-""")
-
-def get_named_last_seens():
-    return get_db().execute("""
 SELECT t1.*, names.name
 FROM history t1
-    LEFT JOIN history t2
-        ON t1.mac = t2.mac 
-        AND t1.unixdate < t2.unixdate
-    JOIN names
+    INNER JOIN (
+        SELECT Max(unixdate), unixdate, mac, description
+        FROM history
+        GROUP BY mac
+    ) t2
+    ON t1.mac = t2.mac
+    AND t1.unixdate = t2.unixdate
+    LEFT JOIN names
         ON t1.mac = names.mac
-WHERE t2.unixdate IS NULL
 """)
 
 @app.route('/')
 def index():
-    devices = [(e['mac'], unix_to_bst(e['unixdate']),e['description']) for e in get_last_seens()]
-    named_devices = [
-        (
-            e['mac'],
-            e['name'],
-            unix_to_bst(e['unixdate']),
-            e['description']
-         ) for e in get_named_last_seens()]
+    devices = get_last_seens()
+
+    # Convert row to a dict
+    devices = [{
+        'mac':d['mac'],
+        'description':d['description'],
+        'lastseen':unix_to_bst(d['unixdate']),
+        'name': d['name'],
+    } for d in devices]
+
+    # Build the template variables
+    unnamed_devices = filter(lambda x: x['name'] is None, devices)
+    named_devices = filter(lambda x: x['name'] is not None, devices)
+
     return render_template('index.html',
-                           devices=devices,
+                           devices=unnamed_devices,
                            named_devices=named_devices)
 def add_device_name(mac,name):
     get_db().execute(

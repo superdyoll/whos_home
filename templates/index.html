@@ -4,11 +4,11 @@
   <h1>Who's In?</h1>
   <h4>Named devices</h4>
   {% for dev in named_devices %}
-    <p>{{dev[1]}}, Last seen: {{dev[2]}}</p>
+    <p>{{dev['name']}}, Last seen: {{dev['lastseen']}}</p>
   {% endfor %}
   <h4>Other devices</h4>
   {% for dev in devices %}
-      <p>{{dev[2]}} ({{dev[0]}}), Last seen: {{dev[1]}}</p>
+      <p>{{dev['description']}} ({{dev['mac']}}), Last seen: {{dev['lastseen']}}</p>
   {% endfor %}
   <form action="/name_device" method="post">
     <h4> Name a device </h4>
