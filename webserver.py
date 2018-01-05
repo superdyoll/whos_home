@@ -2,7 +2,7 @@
 from flask import Flask, g, render_template, request, redirect
 import sqlite3
 import pytz
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 
 DATABASE = 'whos_home.db'
 TIMEZONE = 'Europe/London'
@@ -51,7 +51,7 @@ STATUS_JUST_LEFT = "just-left"
 STATUS_OUT = "out"
 
 def determine_color(uk_time):
-    utc_dt = datetime.now(timezone.utc) # UTC time
+    utc_dt = datetime.now(pytz.utc) # UTC time
     dt = utc_dt.astimezone(tz) # local time
     diff_time = dt-uk_time
     if diff_time < timedelta(minutes=10):
