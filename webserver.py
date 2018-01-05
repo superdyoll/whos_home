@@ -2,10 +2,13 @@
 from flask import Flask, g, render_template, request, redirect
 import sqlite3
 import pytz
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 DATABASE = 'whos_home.db'
 TIMEZONE = 'Europe/London'
+
+# convert it to tz
+tz = pytz.timezone(TIMEZONE)
 
 app = Flask(__name__)
 
@@ -13,8 +16,6 @@ app = Flask(__name__)
 def unix_to_bst(timestamp):
     # get time in UTC
     utc_dt = datetime.utcfromtimestamp(timestamp).replace(tzinfo=pytz.utc)
-    # convert it to tz
-    tz = pytz.timezone(TIMEZONE)
     return utc_dt.astimezone(tz)
 
 def get_db():
@@ -45,15 +46,30 @@ FROM history t1
         ON t1.mac = names.mac
 """)
 
+STATUS_IN = "in"
+STATUS_JUST_LEFT = "just-left"
+STATUS_OUT = "out"
+
+def determine_color(uk_time):
+    utc_dt = datetime.now(timezone.utc) # UTC time
+    dt = utc_dt.astimezone(tz) # local time
+    diff_time = dt-uk_time
+    if diff_time < timedelta(minutes=10):
+        return STATUS_IN
+    elif diff_time < timedelta(minutes=60):
+        return STATUS_JUST_LEFT
+    else:
+        return STATUS_OUT
+
 @app.route('/')
 def index():
     devices = get_last_seens()
-
     # Convert row to a dict
     devices = [{
         'mac':d['mac'],
         'description':d['description'],
         'lastseen':unix_to_bst(d['unixdate']),
+        'color':determine_color(unix_to_bst(d['unixdate'])),
         'name': d['name'],
     } for d in devices]
 
@@ -68,6 +84,12 @@ def add_device_name(mac,name):
     get_db().execute(
         """INSERT OR REPLACE INTO names (mac, name) VALUES (?,?)""",
         [mac, name]
+    )
+
+def remove_device_name(name):
+    get_db().execute(
+        """DELETE FROM names WHERE name='?'""",
+        [name]
     )
 
 @app.route('/name_device', methods=['POST'])

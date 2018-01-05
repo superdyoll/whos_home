@@ -5,7 +5,18 @@
  document.addEventListener("DOMContentLoaded", function(event) {
     setTimeout(function(){location.reload()},1000*60*2)
   });
- </script>
+</script>
+<style>
+ .out {
+     color:#666
+ }
+ .in {
+     color:#0d9200
+ }
+ .just-left {
+     color:#ffa900
+ }
+</style>
 </head>
 <body>
     <title>Who's in?</title>
@@ -13,11 +24,11 @@
       <h1>Who's In?</h1>
       <h4>Named devices</h4>
       {% for dev in named_devices %}
-        <p>{{dev['name']}}, Last seen: {{dev['lastseen']}}</p>
+        <p class="{{dev['color']}}">{{dev['name']}}, Last seen: {{dev['lastseen']}}</p>
       {% endfor %}
       <h4>Other devices</h4>
       {% for dev in devices %}
-          <p>{{dev['description']}} ({{dev['mac']}}), Last seen: {{dev['lastseen']}}</p>
+          <p class="{{dev['color']}}">{{dev['description']}} ({{dev['mac']}}), Last seen: {{dev['lastseen']}}</p>
       {% endfor %}
       <form action="/name_device" method="post">
         <h4> Name a device </h4>
