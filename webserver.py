@@ -72,6 +72,7 @@ def index():
         'color':determine_color(unix_to_bst(d['unixdate'])),
         'name': d['name'],
     } for d in devices]
+    devices.reverse()
 
     # Build the template variables
     unnamed_devices = filter(lambda x: x['name'] is None, devices)
