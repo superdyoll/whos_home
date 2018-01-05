@@ -88,7 +88,7 @@ def add_device_name(mac,name):
 
 def remove_device_name(name):
     get_db().execute(
-        """DELETE FROM names WHERE name='?'""",
+        """DELETE FROM names WHERE name=(?)""",
         [name]
     )
 
@@ -99,6 +99,14 @@ def name_device():
     add_device_name(mac, name)
     get_db().commit()
     return redirect("/", code=302)
+
+@app.route('/remove_device', methods=['POST'])
+def remove_device():
+    name = request.form['name']
+    remove_device_name(name)
+    get_db().commit()
+    return redirect("/", code=302)
+
 
 
 if __name__ == '__main__':
