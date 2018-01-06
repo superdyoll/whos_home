@@ -26,7 +26,7 @@ def pretty_date(diff):
 
     if day_diff == 0:
         if second_diff < 60:
-            return "0 minutes ago"
+            return "just now"
         if second_diff < 120:
             return "a minute ago"
         if second_diff < 3600:
