@@ -27,13 +27,19 @@
     <div>
       <h1>Who's In?</h1>
       <h4>Named devices</h4>
+      <table>
+      <tr><th>Name</th><th>Last seen</th><th>Date</th></tr>
       {% for dev in named_devices %}
-        <p class="{{dev['color']}}">{{dev['name']}}, Last seen: {{dev['pretty_lastseen']}} ({{dev['lastseen']}})</p>
+      <tr class="{{dev['color']}}"><td>{{dev['name']}}</td><td>{{dev['pretty_lastseen']}}</td><td>{{dev['lastseen']}}</td></tr>
       {% endfor %}
+      </table>
       <h4>Other devices</h4>
+      <table>
+      <tr><th>Name</th><th>MAC</th><th>Last seen</th><th>Date</th></tr>
       {% for dev in devices %}
-          <p class="{{dev['color']}}">{{dev['description']}} ({{dev['mac']}}), Last seen: {{dev['pretty_lastseen']}} ({{dev['lastseen']}})</p>
+      <tr class="{{dev['color']}}"><td>{{dev['description']}}</td><td>{{dev['mac']}}</td><td>{{dev['pretty_lastseen']}}</td><td>{{dev['lastseen']}}</td></tr>
       {% endfor %}
+      </table>
       <form action="/name_device" method="post">
         <h4> Name a device </h4>
         <p>Mac <input type="text" name="mac"></p>
