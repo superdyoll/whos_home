@@ -12,6 +12,38 @@ tz = pytz.timezone(TIMEZONE)
 
 app = Flask(__name__)
 
+def pretty_date(diff):
+    """
+    get a date difference and return a
+    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
+    'just now', etc
+    """
+    second_diff = diff.total_seconds()
+    day_diff = diff.days
+
+    if day_diff < 0:
+        return ''
+
+    if day_diff == 0:
+        if second_diff < 60:
+            return "0 minutes ago"
+        if second_diff < 120:
+            return "a minute ago"
+        if second_diff < 3600:
+            return str(second_diff / 60) + " minutes ago"
+        if second_diff < 7200:
+            return "an hour ago"
+        if second_diff < 86400:
+            return str(second_diff / 3600) + " hours ago"
+    if day_diff == 1:
+        return "Yesterday"
+    if day_diff < 7:
+        return str(day_diff) + " days ago"
+    if day_diff < 31:
+        return str(day_diff / 7) + " weeks ago"
+    if day_diff < 365:
+        return str(day_diff / 30) + " months ago"
+    return str(day_diff / 365) + " years ago"
 
 def unix_to_bst(timestamp):
     # get time in UTC
@@ -50,10 +82,13 @@ STATUS_IN = "in"
 STATUS_JUST_LEFT = "just-left"
 STATUS_OUT = "out"
 
-def determine_color(uk_time):
+def get_diff_from_now(uk_time):
     utc_dt = datetime.now(pytz.utc) # UTC time
     dt = utc_dt.astimezone(tz) # local time
-    diff_time = dt-uk_time
+    return dt-uk_time
+
+def determine_color(uk_time):
+    diff_time = get_diff_from_now(uk_time)
     if diff_time < timedelta(minutes=10):
         return STATUS_IN
     elif diff_time < timedelta(minutes=60):
@@ -68,7 +103,8 @@ def index():
     devices = [{
         'mac':d['mac'],
         'description':d['description'],
-        'lastseen':unix_to_bst(d['unixdate']),
+        'lastseen':unix_to_bst(d['unixdate']).strftime("%d/%m %H:%M"),
+        'pretty_lastseen':pretty_date(get_diff_from_now(unix_to_bst(d['unixdate']))),
         'color':determine_color(unix_to_bst(d['unixdate'])),
         'name': d['name'],
     } for d in devices]
@@ -107,7 +143,6 @@ def remove_device():
     remove_device_name(name)
     get_db().commit()
     return redirect("/", code=302)
-
 
 
 if __name__ == '__main__':
