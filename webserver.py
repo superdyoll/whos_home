@@ -2,19 +2,52 @@
 from flask import Flask, g, render_template, request, redirect
 import sqlite3
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 
 DATABASE = 'whos_home.db'
 TIMEZONE = 'Europe/London'
 
+# convert it to tz
+tz = pytz.timezone(TIMEZONE)
+
 app = Flask(__name__)
 
+def pretty_date(diff):
+    """
+    get a date difference and return a
+    pretty string like 'an hour ago', 'Yesterday', '3 months ago',
+    'just now', etc
+    """
+    second_diff = int(round(diff.total_seconds()))
+    day_diff = diff.days
+
+    if day_diff < 0:
+        return ''
+
+    if day_diff == 0:
+        if second_diff < 60:
+            return "just now"
+        if second_diff < 120:
+            return "a minute ago"
+        if second_diff < 3600:
+            return str(int(round(second_diff / 60))) + " minutes ago"
+        if second_diff < 7200:
+            return "an hour ago"
+        if second_diff < 86400:
+            return str(int(round(second_diff / 3600))) + " hours ago"
+    if day_diff == 1:
+        return "Yesterday"
+    if day_diff < 7:
+        return str(int(round(day_diff))) + " days ago"
+    if day_diff < 31:
+        return str(int(round(day_diff / 7))) + " weeks ago"
+    if day_diff < 365:
+        return str(int(round(day_diff / 30))) + " months ago"
+    return str(int(round(day_diff / 365))) + " years ago"
 
 def unix_to_bst(timestamp):
     # get time in UTC
     utc_dt = datetime.utcfromtimestamp(timestamp).replace(tzinfo=pytz.utc)
-    # convert it to tz
-    tz = pytz.timezone(TIMEZONE)
     return utc_dt.astimezone(tz)
 
 def get_db():
@@ -45,17 +78,37 @@ FROM history t1
         ON t1.mac = names.mac
 """)
 
+STATUS_IN = "in"
+STATUS_JUST_LEFT = "just-left"
+STATUS_OUT = "out"
+
+def get_diff_from_now(uk_time):
+    utc_dt = datetime.now(pytz.utc) # UTC time
+    dt = utc_dt.astimezone(tz) # local time
+    return dt-uk_time
+
+def determine_color(uk_time):
+    diff_time = get_diff_from_now(uk_time)
+    if diff_time < timedelta(minutes=10):
+        return STATUS_IN
+    elif diff_time < timedelta(minutes=60):
+        return STATUS_JUST_LEFT
+    else:
+        return STATUS_OUT
+
 @app.route('/')
 def index():
     devices = get_last_seens()
-
     # Convert row to a dict
     devices = [{
         'mac':d['mac'],
         'description':d['description'],
-        'lastseen':unix_to_bst(d['unixdate']),
+        'lastseen':unix_to_bst(d['unixdate']).strftime("%d/%m %H:%M"),
+        'pretty_lastseen':pretty_date(get_diff_from_now(unix_to_bst(d['unixdate']))),
+        'color':determine_color(unix_to_bst(d['unixdate'])),
         'name': d['name'],
     } for d in devices]
+    devices.reverse()
 
     # Build the template variables
     unnamed_devices = filter(lambda x: x['name'] is None, devices)
@@ -70,11 +123,24 @@ def add_device_name(mac,name):
         [mac, name]
     )
 
+def remove_device_name(name):
+    get_db().execute(
+        """DELETE FROM names WHERE name=(?)""",
+        [name]
+    )
+
 @app.route('/name_device', methods=['POST'])
 def name_device():
     mac = request.form['mac']
     name = request.form['name']
     add_device_name(mac, name)
+    get_db().commit()
+    return redirect("/", code=302)
+
+@app.route('/remove_device', methods=['POST'])
+def remove_device():
+    name = request.form['name']
+    remove_device_name(name)
     get_db().commit()
     return redirect("/", code=302)
 

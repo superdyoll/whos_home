@@ -13,9 +13,7 @@ sudo pip install virtualenv
 # Python packages
 virtualenv venv
 source venv/bin/activate
-pip install Flask
-pip install pytz
-pip install sqlite3
+pip install Flask pytz
 ```
 
 set up a CRON job to run `sudo ./whos_home.sh | python parse_whos_home_output.py` every 5 minutes or so.
