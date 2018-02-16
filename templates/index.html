@@ -23,14 +23,14 @@
     color:#0d9200;
  }
  .in.background{
-    background-color:#0d9200;
+    background-color:#6cec5f;
 	color: #000;
  }
  .just-left {
     color:#ffa900;
  }
  .just-left.background{
-    background-color:#ffa900;
+    background-color:#ffc149;
 	color: #000;
  }
  .card {
@@ -54,7 +54,7 @@
 			<div class="row">
       {% for dev in named_devices %}
 				<div class="col">
-					<div class="card {{dev['color']}} background" style="width: 18rem;">
+					<div class="card {{dev['color']}} background" style="width: 12rem;">
 						<div class="card-body">
 							<h5 class="card-title">{{dev['name']}}</h5>
 							<h6 class="card-subtitle mb-2 text-muted">{{dev['pretty_lastseen']}}</h6>
