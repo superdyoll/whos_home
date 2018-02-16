@@ -6,10 +6,14 @@ import re
 import os.path
 import sqlite3
 
+from common import mac_str_to_int
+
 hex_r = r'[A-Z0-9]'
-MAC_ADDRESS_REGEX = re.compile("{0}{0}:{0}{0}:{0}{0}:{0}{0}:{0}{0}:{0}{0}".format(hex_r))
+MAC_ADDRESS_REGEX = re.compile(
+    "{0}{0}:{0}{0}:{0}{0}:{0}{0}:{0}{0}:{0}{0}".format(hex_r))
 
 DEVICE_INFO_REGEX = re.compile(r"\((.*)\)$")
+
 
 def create_db(conn):
     c = conn.cursor()
@@ -17,53 +21,48 @@ def create_db(conn):
     # Create history table
     c.execute('''
 CREATE TABLE history(
+    mac UNSIGNED INTEGER PRIMARY KEY,
     unixdate UNSIGNED INTEGER,
-    mac TEXT,
     description TEXT
 )''')
-
-    # Create logs table
-    c.execute('''
-CREATE TABLE logs(
-    unixdate UNSIGNED INTEGER,
-    error TEXT
-)''')
-
     # Create names table
     c.execute('''
 CREATE TABLE names(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    mac TEXT NOT NULL,
+    mac INTEGER NOT NULL,
     name TEXT NOT NULL
 )''')
 
     # Save (commit) the changes
     conn.commit()
 
+
 def delete_db(conn):
     c = conn.cursor()
-    c.execute('''DROP TABLE logs''')
     c.execute('''DROP TABLE history''')
     c.execute('''DROP TABLE names''')
     conn.commit()
 
+
 def insert_data(
-    conn,
-    unixtime,
-    all_data,
-    ):
-        c = conn.cursor()
-        c.executemany(
-            'INSERT INTO history VALUES (?,?,?)',
-            [(unixtime, d[0], d[1]) for d in all_data]
-        )
+        conn,
+        unixtime,
+        all_data,
+):
+    c = conn.cursor()
+    c.executemany(
+        'INSERT OR REPLACE INTO history (mac, unixdate, description) VALUES (?,?,?)',
+        [(d[0], unixtime, d[1]) for d in all_data]
+    )
+
 
 def cleanup_data(data):
     data = [l for l in data if "MAC Address:" in l]
     for line in data:
-        mac = MAC_ADDRESS_REGEX.search(line).group(0)
+        mac = mac_str_to_int(MAC_ADDRESS_REGEX.search(line).group(0))
         info = DEVICE_INFO_REGEX.search(line).group(1)
         yield mac, info
+
 
 def main(db_name, should_create_db):
     exists = os.path.isfile(db_name)
@@ -85,9 +84,10 @@ def main(db_name, should_create_db):
         insert_data(conn, now, all_data)
         conn.commit()
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--create_db", action='store_true')
-    parser.add_argument("--database","-d", default="whos_home.db")
+    parser.add_argument("--database", "-d", default="whos_home.db")
     args = parser.parse_args()
     main(args.database, args.create_db)
