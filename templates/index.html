@@ -15,7 +15,7 @@
 	setTimeout(function(){location.reload()},1000*60*2)
 
 	{% if harmony_domain %}
-	var domain = {{harmony_domain}};
+	var domain = "{{harmony_domain}}";
 	$('#watch-a-movie').click(function(){
 		$.ajax({
 		    type: 'POST',
