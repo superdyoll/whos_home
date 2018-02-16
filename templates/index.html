@@ -36,6 +36,9 @@
  .card {
 	margin-bottom: 15px;
  }
+ .col-card {
+	padding-left: 0px;
+ }
  body {
      font-family:arial;
      font-weight: bold;
@@ -53,7 +56,7 @@
 			</div>
 			<div class="row">
       {% for dev in named_devices %}
-				<div class="col-3">
+				<div class="col-3 col-card">
 					<div class="card {{dev['color']}} background" style="width: 12rem;">
 						<div class="card-body">
 							<h5 class="card-title">{{dev['name']}}</h5>
