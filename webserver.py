@@ -9,6 +9,11 @@ from common import mac_int_to_str, mac_str_to_int
 DATABASE = 'whos_home.db'
 TIMEZONE = 'Europe/London'
 
+# Domain running an instance of harmony-api (blank for disable)
+# in the format of: "http://127.0.0.1:8282/"
+HARMONY_DOMAIN = ""
+
+
 # convert it to tz
 tz = pytz.timezone(TIMEZONE)
 
@@ -121,7 +126,8 @@ def index():
 
     return render_template('index.html',
                            devices=unnamed_devices,
-                           named_devices=named_devices)
+                           named_devices=named_devices,
+                           harmony_domain=HARMONY_DOMAIN)
 
 
 def add_device_name(mac, name):
