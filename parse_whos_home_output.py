@@ -21,14 +21,6 @@ CREATE TABLE history(
     mac TEXT,
     description TEXT
 )''')
-
-    # Create logs table
-    c.execute('''
-CREATE TABLE logs(
-    unixdate UNSIGNED INTEGER,
-    error TEXT
-)''')
-
     # Create names table
     c.execute('''
 CREATE TABLE names(
@@ -42,7 +34,6 @@ CREATE TABLE names(
 
 def delete_db(conn):
     c = conn.cursor()
-    c.execute('''DROP TABLE logs''')
     c.execute('''DROP TABLE history''')
     c.execute('''DROP TABLE names''')
     conn.commit()
