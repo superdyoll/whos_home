@@ -4,6 +4,8 @@ import sqlite3
 import pytz
 from datetime import datetime, timedelta
 
+from common import mac_int_to_str, mac_str_to_int
+
 DATABASE = 'whos_home.db'
 TIMEZONE = 'Europe/London'
 
@@ -67,13 +69,6 @@ def get_last_seens():
     return get_db().execute("""
 SELECT t1.*, names.name
 FROM history t1
-    INNER JOIN (
-        SELECT Max(unixdate), unixdate, mac, description
-        FROM history
-        GROUP BY mac
-    ) t2
-    ON t1.mac = t2.mac
-    AND t1.unixdate = t2.unixdate
     LEFT JOIN names
         ON t1.mac = names.mac
 """)
@@ -101,7 +96,7 @@ def index():
     devices = get_last_seens()
     # Convert row to a dict
     devices = [{
-        'mac':d['mac'],
+        'mac':mac_int_to_str(d['mac']),
         'description':d['description'],
         'lastseen':unix_to_bst(d['unixdate']).strftime("%d/%m %H:%M"),
         'pretty_lastseen':pretty_date(get_diff_from_now(unix_to_bst(d['unixdate']))),
@@ -131,7 +126,7 @@ def remove_device_name(name):
 
 @app.route('/name_device', methods=['POST'])
 def name_device():
-    mac = request.form['mac']
+    mac = mac_str_to_int(request.form['mac'])
     name = request.form['name']
     add_device_name(mac, name)
     get_db().commit()
