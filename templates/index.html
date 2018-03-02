@@ -73,7 +73,7 @@ body {
 		<title>Who's in?</title>
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-1">
+				<div class="col-2">
 					<h1>Who's In?</h1>
 				</div>
 			{% if harmony_domain %}
@@ -101,15 +101,9 @@ body {
   {% endfor %}
 			</div>
 			<div class="row">
-				<div class="col">
+				<div class="col"align="center">
 					<span style="display: block !important; width: 320px; text-align: center; font-family: sans-serif; font-size: 12px;">
-						<a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:00000.28.03874&bannertypeclick=wu_clean2day" title="Southampton, United Kingdom Weather Forecast" target="_blank">
-							<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity=Southampton&ForcedState=United Kingdom&wmo=03874&language=EN" alt="Find more about Weather in Southampton, UK" width="300" />
-						</a>
-						<br />
-						<a href="http://www.wunderground.com/cgi-bin/findweather/getForecast?query=zmw:00000.28.03874&bannertypeclick=wu_clean2day" title="Get latest Weather Forecast updates" style="font-family: sans-serif; font-size: 12px" target="_blank">
-							Click for weather forecast
-						</a>
+						<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity={{city}}&ForcedState={{country}}&wmo=03874&language=EN" alt="Find more about Weather in Southampton, UK" width="300" />
 					</span>
 				</div>
 			</div>
