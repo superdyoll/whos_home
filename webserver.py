@@ -8,6 +8,8 @@ from common import mac_int_to_str, mac_str_to_int
 
 DATABASE = 'whos_home.db'
 TIMEZONE = 'Europe/London'
+CITY = 'Southampton'
+COUNTRY = 'United Kingdom'
 
 # Domain running an instance of harmony-api (blank for disable)
 # in the format of: "http://127.0.0.1:8282/"
@@ -127,7 +129,9 @@ def index():
     return render_template('index.html',
                            devices=unnamed_devices,
                            named_devices=named_devices,
-                           harmony_domain=HARMONY_DOMAIN)
+                           harmony_domain=HARMONY_DOMAIN,
+						   city=CITY,
+						   country=COUNTRY)
 
 
 def add_device_name(mac, name):

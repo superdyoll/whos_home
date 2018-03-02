@@ -2,95 +2,93 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-		<script
-		  src="https://code.jquery.com/jquery-3.3.1.min.js"
-		    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-		      crossorigin="anonymous"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous">
+		</script>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"/>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"/>
 		<script>
- // Refresh every 2 mins
-  $(document).ready(function(){
-	setTimeout(function(){location.reload()},1000*60*2)
+// Refresh every 2 mins
+$(document).ready(function(){
+setTimeout(function(){location.reload()},1000*60*2)
 
-	{% if harmony_domain %}
-	var domain = "{{harmony_domain}}";
-	$('#watch-a-movie').click(function(){
-		$.ajax({
-		    type: 'POST',
-		    url: domain+"hubs/harmony-hub/activities/watch-a-movie",
-		    data: {},
-		});
+{% if harmony_domain %}
+var domain = "{{harmony_domain}}";
+$('#watch-a-movie').click(function(){
+	$.ajax({
+		type: 'POST',
+		url: domain+"hubs/harmony-hub/activities/watch-a-movie",
+		data: {},
 	});
-	$('#off').click(function(){
-		$.ajax({
-		    type: 'PUT',
-		    url: domain+"hubs/harmony-hub/off",
-		    data: {},
-		});
+});
+$('#off').click(function(){
+	$.ajax({
+		type: 'PUT',
+		url: domain+"hubs/harmony-hub/off",
+		data: {},
 	});
-	{% endif %}
+});
+{% endif %}
 
-  });
+});
 		</script>
 		<style>
- .out {
-    color:#AAA;
- }
- .out.background {
-	background-color:#AAA;
-	color: #000;
- }
- .in {
-    color:#0d9200;
- }
- .in.background{
-    background-color:#6cec5f;
-	color: #000;
- }
- .just-left {
-    color:#ffa900;
- }
- .just-left.background{
-    background-color:#ffc149;
-	color: #000;
- }
- .card {
-	margin-bottom: 15px;
- }
- .col-card {
-	padding-left: 0px;
- }
- .btn {
-	height:100%;
- }
- body {
-     font-family:arial;
-     font-weight: bold;
- }
+.out {
+color:#AAA;
+}
+.out.background {
+background-color:#AAA;
+color: #000;
+}
+.in {
+color:#0d9200;
+}
+.in.background{
+background-color:#6cec5f;
+color: #000;
+}
+.just-left {
+color:#ffa900;
+}
+.just-left.background{
+background-color:#ffc149;
+color: #000;
+}
+.card {
+margin-bottom: 15px;
+}
+.col-card {
+padding-left: 0px;
+}
+.btn {
+height:100%;
+}
+body {
+ font-family:arial;
+ font-weight: bold;
+}
 		</style>
 	</head>
 	<body>
 		<title>Who's in?</title>
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col">
+				<div class="col-2">
 					<h1>Who's In?</h1>
 				</div>
-				{% if harmony_domain %}
+			{% if harmony_domain %}
 				<div class="col">
 					<span> Harmony Controls </span>
 					<button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
 					<button class="btn btn-secondary" id="off">Off</button>
 				</div>
-				{% endif %}
+			{% endif %}
 			</div>
 			<div class="row">
 				<h4>Named devices</h4>
 			</div>
 			<div class="row">
-      {% for dev in named_devices %}
+  {% for dev in named_devices %}
 				<div class="col-3 col-card">
 					<div class="card {{dev['color']}} background" style="width: 12rem;">
 						<div class="card-body">
@@ -100,7 +98,14 @@
 						</div>
 					</div>
 				</div>
-      {% endfor %}
+  {% endfor %}
+			</div>
+			<div class="row">
+				<div class="col"align="center">
+					<span style="display: block !important; width: 320px; text-align: center; font-family: sans-serif; font-size: 12px;">
+						<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity={{city}}&ForcedState={{country}}&wmo=03874&language=EN" alt="Find more about Weather in Southampton, UK" width="300" />
+					</span>
+				</div>
 			</div>
 			<div class="row">
 				<h4>Other devices</h4>
@@ -114,14 +119,14 @@
 							<th>Last seen</th>
 							<th>Date</th>
 						</tr>
-      {% for dev in devices %}
+  {% for dev in devices %}
 						<tr class="{{dev['color']}}">
 							<td>{{dev['description']}}</td>
 							<td>{{dev['mac']}}</td>
 							<td>{{dev['pretty_lastseen']}}</td>
 							<td>{{dev['lastseen']}}</td>
 						</tr>
-      {% endfor %}
+  {% endfor %}
 					</table>
 				</div>
 			</div>
