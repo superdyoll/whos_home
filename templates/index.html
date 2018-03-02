@@ -1,14 +1,37 @@
 <!doctype html>
 <html>
 	<head>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+		<script
+		  src="https://code.jquery.com/jquery-3.3.1.min.js"
+		    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		      crossorigin="anonymous"></script>
+
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 		<script>
  // Refresh every 2 mins
- document.addEventListener("DOMContentLoaded", function(event) {
-    setTimeout(function(){location.reload()},1000*60*2)
+  $(document).ready(function(){
+	setTimeout(function(){location.reload()},1000*60*2)
+
+	{% if harmony_domain %}
+	var domain = "{{harmony_domain}}";
+	$('#watch-a-movie').click(function(){
+		$.ajax({
+		    type: 'POST',
+		    url: domain+"hubs/harmony-hub/activities/watch-a-movie",
+		    data: {},
+		});
+	});
+	$('#off').click(function(){
+		$.ajax({
+		    type: 'PUT',
+		    url: domain+"hubs/harmony-hub/off",
+		    data: {},
+		});
+	});
+	{% endif %}
+
   });
 		</script>
 		<style>
@@ -39,6 +62,9 @@
  .col-card {
 	padding-left: 0px;
  }
+ .btn {
+	height:100%;
+ }
  body {
      font-family:arial;
      font-weight: bold;
@@ -49,7 +75,16 @@
 		<title>Who's in?</title>
 		<div class="container-fluid">
 			<div class="row">
-				<h1>Who's In?</h1>
+				<div class="col">
+					<h1>Who's In?</h1>
+				</div>
+				{% if harmony_domain %}
+				<div class="col">
+					<span> Harmony Controls </span>
+					<button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
+					<button class="btn btn-secondary" id="off">Off</button>
+				</div>
+				{% endif %}
 			</div>
 			<div class="row">
 				<h4>Named devices</h4>
@@ -110,6 +145,7 @@
 					</form>
 				</div>
 			</div>
+
 		</div>
 	</body>
 </html>
