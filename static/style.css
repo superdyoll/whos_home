@@ -1,0 +1,94 @@
+body, html {
+	 font-family:arial;
+	 font-weight: bold;
+	 height: 100%;
+	 margin: 0;
+}
+/* XS styling */
+@media (max-width: 768px) {
+  .container {
+    width: inherit;
+  }
+}
+
+/* SM styling */
+@media (min-width: 768px) and (max-width: 992px) {
+  .container {
+    width: inherit;
+  }
+}
+
+/* Colours for leaving cards */
+.out {
+	color:#AAA;
+}
+.out.background {
+	background-color:#AAA;
+	color: #000;
+}
+.in {
+	color:#0d9200;
+}
+.in.background{
+	background-color:#6cec5f;
+	color: #000;
+}
+.just-left {
+	color:#ffa900;
+}
+.just-left.background{
+	background-color:#ffc149;
+	color: #000;
+}
+.card {
+	margin-bottom: 15px;
+}
+.col-card {
+    padding-right: 10px;
+}
+
+/* Other devices CSS */
+#btnOther {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.card-body {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1.25rem;
+}
+
+/* Background and prettiness */
+.bg {
+	display: block;
+	position: relative;
+    height: 100%;
+}
+.bg::after {
+	content: "";
+	background: url("https://source.unsplash.com/daily");
+    opacity: 0.75;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	position: absolute;
+	z-index: -1;   
+}
+.border {
+    background-color: #111;
+    color: #fff;
+    padding: 5px;
+    letter-spacing: 3px;
+}
+.top-row {
+	margin-top: 10px;
+}
+.btn, .card{
+	border-radius: .15rem;
+}
