@@ -32,125 +32,127 @@ $('#off').click(function(){
 
 });
 		</script>
-		<style>
-.out {
-color:#AAA;
-}
-.out.background {
-background-color:#AAA;
-color: #000;
-}
-.in {
-color:#0d9200;
-}
-.in.background{
-background-color:#6cec5f;
-color: #000;
-}
-.just-left {
-color:#ffa900;
-}
-.just-left.background{
-background-color:#ffc149;
-color: #000;
-}
-.card {
-margin-bottom: 15px;
-}
-.col-card {
-padding-left: 0px;
-}
-.btn {
-height:100%;
-}
-body {
- font-family:arial;
- font-weight: bold;
-}
-		</style>
+		<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 	</head>
 	<body>
-		<title>Who's in?</title>
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-2">
-					<h1>Who's In?</h1>
+		<div class="bg">
+			<title>Who's in?</title>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-auto">
+						<h1 class="border top-row">Who's In?</h1>
+					</div>
+				{% if harmony_domain %}
+					<div class="col">
+						<div class="float-right top-row">
+							<span class="border"> Harmony Controls </span>
+							<button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
+							<button class="btn btn-secondary" id="off">Off</button>
+						</div>
+					</div>
+				{% endif %}
 				</div>
-			{% if harmony_domain %}
-				<div class="col">
-					<span> Harmony Controls </span>
-					<button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
-					<button class="btn btn-secondary" id="off">Off</button>
+				<div class="row">
+					<h4 class="border">Named devices</h4>
 				</div>
-			{% endif %}
-			</div>
-			<div class="row">
-				<h4>Named devices</h4>
-			</div>
-			<div class="row">
-  {% for dev in named_devices %}
-				<div class="col-3 col-card">
-					<div class="card {{dev['color']}} background" style="width: 12rem;">
-						<div class="card-body">
-							<h5 class="card-title">{{dev['name']}}</h5>
-							<h6 class="card-subtitle mb-2 text-muted">{{dev['pretty_lastseen']}}</h6>
-							<p class="card-text">{{dev['lastseen']}}</p>
+				<div class="row">
+	  {% for dev in named_devices %}
+					<div class="col-auto col-card">
+						<div class="card {{dev['color']}} background" style="width: 12rem;">
+							<div class="card-body">
+								<h5 class="card-title">{{dev['name']}}</h5>
+								<h6 class="card-subtitle mb-2 text-muted">{{dev['pretty_lastseen']}}</h6>
+								<p class="card-text">{{dev['lastseen']}}</p>
+							</div>
+						</div>
+					</div>
+	  {% endfor %}
+				</div>
+				<div class="row">
+					<div class="col" align="center" id="btnOther">
+						<p>
+							<button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".tools-collapse" aria-expanded="false" aria-controls="devicesPanel addPanel removePanel">
+								Other devices
+							</button>
+						</p>
+					</div>
+					<div class="col" align="center">
+						<span style="display: block !important; width: 320px; text-align: center; font-family: sans-serif; font-size: 12px;">
+							<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity={{city}}&ForcedState={{country}}&wmo=03874&language=EN" alt="Find more about Weather in Southampton, UK" width="300" />
+						</span>
+					</div>
+				</div>
+				<br />
+				<div class ="row">
+					<div class="col">
+						
+						<div class="collapse tools-collapse" id="devicesPanel">
+							<div class="card card-body">
+								<table>
+									<tr>
+										<th>Name</th>
+										<th>MAC</th>
+										<th>Last seen</th>
+										<th>Date</th>
+									</tr>
+				{% for dev in devices %}
+									<tr class="{{dev['color']}}">
+										<td>{{dev['description']}}</td>
+										<td>{{dev['mac']}}</td>
+										<td>{{dev['pretty_lastseen']}}</td>
+										<td>{{dev['lastseen']}}</td>
+									</tr>
+				{% endfor %}
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
-  {% endfor %}
-			</div>
-			<div class="row">
-				<div class="col"align="center">
-					<span style="display: block !important; width: 320px; text-align: center; font-family: sans-serif; font-size: 12px;">
-						<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity={{city}}&ForcedState={{country}}&wmo=03874&language=EN" alt="Find more about Weather in Southampton, UK" width="300" />
-					</span>
+				<div class="row">
+					<div class="col">
+						<div class="collapse tools-collapse" id="addPanel">
+							<div class="card bg-light mb-3">
+								<div class="card-header">Name a device </div>
+								<div class="card-body">
+									<form action="/name_device" method="post">
+										<div class="form-group row">
+											<label for="addMac" class="col-sm-2 col-form-label">Mac</label>
+											<div class="col-sm-10">
+												<input type="text" name="mac" id="addMac" class="form-control"/>
+											</div>
+										</div>
+										<div class="form-group row">
+											<label for="addName" class="col-sm-2 col-form-label">Name</label>
+											<div class="col-sm-10">
+												<input type="text" name="name" id="addName" class="form-control"/>
+											</div>
+										</div>
+										<input type="submit" value="Submit" class="btn btn-primary pull-right" />
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col">
+						<div class="collapse tools-collapse" id="removePanel">
+							<div class="card bg-light mb-3">
+								<div class="card-header">Remove a device</div>
+								<div class="card-body">
+									<form action="/remove_device" method="post">
+										<div class="form-group row">
+											<label for="removeName" class="col-sm-2 col-form-label">Name</label> 
+											<div class="col-sm-10">
+												<input type="text" name="name" id="removeName" class="form-control"/>
+											</div>
+										</div>
+										<input type="submit" value="Submit" class="btn btn-primary pull-right"/>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="row">
-				<h4>Other devices</h4>
-			</div>
-			<div class="row">
-				<div class="col">
-					<table>
-						<tr>
-							<th>Name</th>
-							<th>MAC</th>
-							<th>Last seen</th>
-							<th>Date</th>
-						</tr>
-  {% for dev in devices %}
-						<tr class="{{dev['color']}}">
-							<td>{{dev['description']}}</td>
-							<td>{{dev['mac']}}</td>
-							<td>{{dev['pretty_lastseen']}}</td>
-							<td>{{dev['lastseen']}}</td>
-						</tr>
-  {% endfor %}
-					</table>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col">
-					<form action="/name_device" method="post">
-						<h4> Name a device </h4>
-						<p>Mac <input type="text" name="mac" />
-						</p>
-						<p>Name <input type="text" name="name" />
-						</p>
-						<input type="submit" value="Submit" />
-					</form>
-				</div>
-				<div class="col">
-					<form action="/remove_device" method="post">
-						<h4> Remove a device </h4>
-						<p>Name <input type="text" name="name" />
-						</p>
-						<input type="submit" value="Submit" />
-					</form>
-				</div>
-			</div>
-
 		</div>
 	</body>
 </html>
