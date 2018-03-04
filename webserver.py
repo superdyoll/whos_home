@@ -3,6 +3,7 @@ from flask import Flask, g, render_template, request, redirect
 import sqlite3
 import pytz
 from datetime import datetime, timedelta
+import calendar
 
 from common import mac_int_to_str, mac_str_to_int
 
@@ -85,6 +86,13 @@ FROM history t1
         ON t1.mac = names.mac
 """)
 
+def get_last_note():
+    return get_db().execute("""
+    SELECT note, unixdate
+    FROM notes 
+    WHERE id = 1
+    """)
+
 
 STATUS_IN = "in"
 STATUS_JUST_LEFT = "just-left"
@@ -125,13 +133,20 @@ def index():
     # Build the template variables
     unnamed_devices = filter(lambda x: x['name'] is None, devices)
     named_devices = filter(lambda x: x['name'] is not None, devices)
+    
+    notes = get_last_note()
+    notes = [{
+        'note': d['note'],
+        'pretty_date': pretty_date( get_diff_from_now( unix_to_bst(d['unixdate']))),
+    } for d in notes]
 
     return render_template('index.html',
                            devices=unnamed_devices,
                            named_devices=named_devices,
                            harmony_domain=HARMONY_DOMAIN,
-						   city=CITY,
-						   country=COUNTRY)
+                           city=CITY,
+                           country=COUNTRY,
+                           note=notes[0])
 
 
 def add_device_name(mac, name):
@@ -146,7 +161,23 @@ def remove_device_name(name):
         """DELETE FROM names WHERE name=(?)""",
         [name]
     )
+    
+def add_note_to_db(note):
+    d = datetime.utcnow()
+    unixtime = calendar.timegm(d.utctimetuple())
+    get_db().execute(
+        """INSERT OR REPLACE INTO notes (id, note, unixdate) VALUES(1, ?, ?)""",
+        [note,unixtime]
+    )
+    
 
+@app.route('/edit_note', methods=['POST'])   
+def edit_note():
+    note = request.form['note']
+    add_note_to_db(note)
+    get_db().commit()
+    return redirect("/", code=302)
+    
 
 @app.route('/name_device', methods=['POST'])
 def name_device():

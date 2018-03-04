@@ -39,19 +39,22 @@ $('#off').click(function(){
 				<div class="row">
 					<div class="col-auto">
 						<h1 class="border top-row">Who's In?</h1>
+						<h4 class="border top-row">Named devices</h4>
 					</div>
-				{% if harmony_domain %}
+					{% if note['note'] %}
 					<div class="col">
-						<div class="float-right top-row">
-							<span class="border"> Harmony Controls </span>
-							<button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
-							<button class="btn btn-secondary" id="off">Off</button>
+						<!-- PADDING -->
+					</div>
+					<div class="col-auto">
+						<div class="card top-row">
+							<div class="card-header thin-card">Note<span class="text-muted"> - Written {{note['pretty_date']}}</span></div>
+							<div class="card-body thin-card">	
+								<p class="card-text">{{note['note']}}</p>
+							</div>
 						</div>
 					</div>
-				{% endif %}
-				</div>
-				<div class="row">
-					<h4 class="border">Named devices</h4>
+					{% endif %}
+				
 				</div>
 				<div class="row justify-content-center">
 	  {% for dev in named_devices %}
@@ -67,24 +70,59 @@ $('#off').click(function(){
 	  {% endfor %}
 				</div>
 				<div class="row">
-					<div class="col" align="center" id="btnOther">
+					<div class="col-auto" align="center" id="btnOther">
 						<p>
-							<button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".tools-collapse" aria-expanded="false" aria-controls="devicesPanel addPanel removePanel">
+							<button style="margin: 5px 10px;" class="btn btn-primary" type="button" data-toggle="collapse" data-target=".tools-collapse" aria-expanded="false" aria-controls="devicesPanel addPanel removePanel">
 								Other devices
+							</button>
+							<br />
+							<button class="btn btn-success" type="button" data-toggle="collapse" data-target=".edit-note" aria-expanded="false" aria-controls="notesPanel">
+								Edit Note
 							</button>
 						</p>
 					</div>
-					<div class="col" align="center">
+					{% if harmony_domain %}
+					<div class="col-auto">
+						<div class="card">
+							<div class="card-header thin-card">Harmony Controls</div>
+							<div class="card-body thin-card">
+								<button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
+								<button class="btn btn-secondary" id="off">Off</button>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+					<div class="col" align="right">
 						<!-- Weather provided by wunderground -->
 						<span style="display: block !important; width: 320px; text-align: center; font-family: sans-serif; font-size: 12px;">
 							<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity={{city}}&ForcedState={{country}}&wmo=03874&language=EN" alt="Find more about Weather in {{city}}, {{country}}" width="300" />
 						</span>
 					</div>
 				</div>
+				<br class="collapse edit-note"/>
+				<div class="row">
+					<div class="col">
+						<div class="collapse edit-note" id="notesPanel">
+							<div class="card bg-light mb-3">
+								<div class="card-header">Edit Note</div>
+								<div class="card-body">
+									<form action="/edit_note" method="post">
+										<div class="form-group row">
+											<label for="note" class="col-sm-2 col-form-label">Note</label> 
+											<div class="col-sm-10">
+												<input type="text" name="note" id="note" class="form-control" value="{% if note %}{{note['note']}}{% endif %}" />
+											</div>
+										</div>
+										<input type="submit" value="Submit" class="btn btn-primary pull-right"/>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 				<br class="collapse tools-collapse"/>
 				<div class ="row">
 					<div class="col">
-
 						<div class="collapse tools-collapse" id="devicesPanel">
 							<div class="card card-body">
 								<table>

@@ -32,6 +32,13 @@ CREATE TABLE names(
     mac INTEGER NOT NULL,
     name TEXT NOT NULL
 )''')
+    # Create notes table
+    c.execute('''
+CREATE TABLE notes(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    note TEXT NOT NULL,
+    unixdate UNSIGNED INTEGER
+)''')
 
     # Save (commit) the changes
     conn.commit()
@@ -41,6 +48,7 @@ def delete_db(conn):
     c = conn.cursor()
     c.execute('''DROP TABLE history''')
     c.execute('''DROP TABLE names''')
+    c.execute('''DROP TABLE notes''')
     conn.commit()
 
 
