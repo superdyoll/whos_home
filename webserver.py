@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-from flask import Flask, g, render_template, request, redirect
 import sqlite3
-import pytz
 from datetime import datetime, timedelta
-import calendar
+import time
+
+import pytz
+from flask import Flask, g, render_template, request, redirect
 
 from common import mac_int_to_str, mac_str_to_int
 
@@ -15,7 +16,6 @@ COUNTRY = 'United Kingdom'
 # Domain running an instance of harmony-api (blank for disable)
 # in the format of: "http://127.0.0.1:8282/"
 HARMONY_DOMAIN = ""
-
 
 # convert it to tz
 tz = pytz.timezone(TIMEZONE)
@@ -86,6 +86,7 @@ FROM history t1
         ON t1.mac = names.mac
 """)
 
+
 def get_last_note():
     return get_db().execute("""
     SELECT note, unixdate
@@ -133,12 +134,17 @@ def index():
     # Build the template variables
     unnamed_devices = filter(lambda x: x['name'] is None, devices)
     named_devices = filter(lambda x: x['name'] is not None, devices)
-    
+
     notes = get_last_note()
     notes = [{
         'note': d['note'],
-        'pretty_date': pretty_date( get_diff_from_now( unix_to_bst(d['unixdate']))),
+        'pretty_date': pretty_date(get_diff_from_now(unix_to_bst(d['unixdate']))),
     } for d in notes]
+
+    # Find the first note
+    note = notes[0] if notes else {'note': '',
+                                   'pretty_date': pretty_date(get_diff_from_now(unix_to_bst(int(time.time()))))
+                                   }
 
     return render_template('index.html',
                            devices=unnamed_devices,
@@ -146,7 +152,7 @@ def index():
                            harmony_domain=HARMONY_DOMAIN,
                            city=CITY,
                            country=COUNTRY,
-                           note=notes[0])
+                           note=note)
 
 
 def add_device_name(mac, name):
@@ -161,23 +167,23 @@ def remove_device_name(name):
         """DELETE FROM names WHERE name=(?)""",
         [name]
     )
-    
+
+
 def add_note_to_db(note):
-    d = datetime.utcnow()
-    unixtime = calendar.timegm(d.utctimetuple())
+    unixtime = int(time.time())
     get_db().execute(
         """INSERT OR REPLACE INTO notes (id, note, unixdate) VALUES(1, ?, ?)""",
-        [note,unixtime]
+        [note, unixtime]
     )
-    
 
-@app.route('/edit_note', methods=['POST'])   
+
+@app.route('/edit_note', methods=['POST'])
 def edit_note():
     note = request.form['note']
     add_note_to_db(note)
     get_db().commit()
     return redirect("/", code=302)
-    
+
 
 @app.route('/name_device', methods=['POST'])
 def name_device():
