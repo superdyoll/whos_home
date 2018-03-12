@@ -92,3 +92,8 @@ body, html {
 .btn, .card{
 	border-radius: .15rem;
 }
+
+/* Cards */
+.thin-card {
+	padding: 0.5rem 0.75rem;
+}

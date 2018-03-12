@@ -20,17 +20,24 @@ def create_db(conn):
 
     # Create history table
     c.execute('''
-CREATE TABLE history(
+CREATE TABLE IF NOT EXISTS history(
     mac UNSIGNED INTEGER PRIMARY KEY,
     unixdate UNSIGNED INTEGER,
     description TEXT
 )''')
     # Create names table
     c.execute('''
-CREATE TABLE names(
+CREATE TABLE IF NOT EXISTS names(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     mac INTEGER NOT NULL,
     name TEXT NOT NULL
+)''')
+    # Create notes table
+    c.execute('''
+CREATE TABLE IF NOT EXISTS notes(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    note TEXT NOT NULL,
+    unixdate UNSIGNED INTEGER
 )''')
 
     # Save (commit) the changes
@@ -41,6 +48,7 @@ def delete_db(conn):
     c = conn.cursor()
     c.execute('''DROP TABLE history''')
     c.execute('''DROP TABLE names''')
+    c.execute('''DROP TABLE notes''')
     conn.commit()
 
 
@@ -64,7 +72,7 @@ def cleanup_data(data):
         yield mac, info
 
 
-def main(db_name, should_create_db):
+def main(db_name, should_create_db, migrate):
     exists = os.path.isfile(db_name)
     with sqlite3.connect(db_name) as conn:
         # Init the DB
@@ -75,6 +83,9 @@ def main(db_name, should_create_db):
             delete_db(conn)
             create_db(conn)
             print("Deleted database and recreated.")
+        elif migrate:
+            create_db(conn)
+            print("Migrated database successfully")
 
         # Parse stdin
         data = sys.stdin.read().splitlines()
@@ -89,5 +100,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--create_db", action='store_true')
     parser.add_argument("--database", "-d", default="whos_home.db")
+    parser.add_argument("--migrate", "-m", default="false")
     args = parser.parse_args()
-    main(args.database, args.create_db)
+    main(args.database, args.create_db, args.migrate)
