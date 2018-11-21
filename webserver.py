@@ -6,6 +6,10 @@ import time
 import pytz
 from flask import Flask, g, render_template, request, redirect
 
+import urllib.request
+import json
+import time
+
 from common import mac_int_to_str, mac_str_to_int
 
 DATABASE = 'whos_home.db'
@@ -16,6 +20,11 @@ COUNTRY = 'United Kingdom'
 # Domain running an instance of harmony-api (blank for disable)
 # in the format of: "http://127.0.0.1:8282/"
 HARMONY_DOMAIN = ""
+
+TRANSPORT_APP_ID = ""
+TRANSPORT_APP_KEY = ""
+FAVOURITE_STATION = ""  # Format AAA (e.g. WAT (for London Waterloo))
+DEPARTURE_TIME = ""  # Format HH:MM
 
 # convert it to tz
 tz = pytz.timezone(TIMEZONE)
@@ -116,6 +125,31 @@ def determine_color(uk_time):
         return STATUS_OUT
 
 
+def get_train_details():
+    if not TRANSPORT_APP_KEY or not TRANSPORT_APP_ID or not FAVOURITE_STATION:
+        return {"train_uid": ''}, ''
+    address = "http://transportapi.com/v3/uk/train/station/{}/live.json?" \
+              "app_id={}&app_key={}&darwin=false&train_status=passenger".format(
+        FAVOURITE_STATION,
+        TRANSPORT_APP_ID,
+        TRANSPORT_APP_KEY)
+    print(address)
+
+    # If there's no global departure time set it to now
+    if not DEPARTURE_TIME:
+        departure_time = datetime.now().strftime("%H:%M")
+    else:
+        departure_time = DEPARTURE_TIME
+
+    with urllib.request.urlopen(address) as url:
+        data = json.loads(url.read().decode())
+        for train in data["departures"]["all"]:
+            if train["aimed_departure_time"] == departure_time:
+                return train, data["station_name"]
+
+    return {"train_uid": ''}, ''
+
+
 @app.route('/')
 def index():
     devices = get_last_seens()
@@ -146,13 +180,18 @@ def index():
                                    'pretty_date': pretty_date(get_diff_from_now(unix_to_bst(int(time.time()))))
                                    }
 
+    # Train details
+    train, station_name = get_train_details()
+
     return render_template('index.html',
                            devices=unnamed_devices,
                            named_devices=named_devices,
                            harmony_domain=HARMONY_DOMAIN,
                            city=CITY,
                            country=COUNTRY,
-                           note=note)
+                           note=note,
+                           train=train,
+                           station_name=station_name)
 
 
 def add_device_name(mac, name):
