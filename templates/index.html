@@ -54,9 +54,9 @@
                 </div>
                 <div class="col-auto">
                     <div class="card top-row train {{ "train-" + train['status'].replace(' ','-').lower() }}">
-                        <div class="card-header thin-card">{{ station_name }} - {{ train['aimed_arrival_time'] }}</div>
+                        <div class="card-header thin-card">{{ station_name }} - {{ train['aimed_departure_time'] }}</div>
                         <div class="card-body thin-card">
-                            <p class="card-text">{{ train['status'] }} - {{ train['expected_arrival_time'] }}</p>
+                            <p class="card-text">{{ train['status'] }} - {{ train['expected_departure_time'] }}</p>
                         </div>
                     </div>
                 </div>

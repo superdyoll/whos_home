@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sqlite3
 from datetime import datetime, timedelta
-import time
+from json import JSONDecodeError
 
 import pytz
 from flask import Flask, g, render_template, request, redirect
@@ -133,7 +133,7 @@ def get_train_details():
         FAVOURITE_STATION,
         TRANSPORT_APP_ID,
         TRANSPORT_APP_KEY)
-    print(address)
+    print (address)
 
     # If there's no global departure time set it to now
     if not DEPARTURE_TIME:
@@ -141,13 +141,15 @@ def get_train_details():
     else:
         departure_time = DEPARTURE_TIME
 
-    with urllib.request.urlopen(address) as url:
-        data = json.loads(url.read().decode())
-        for train in data["departures"]["all"]:
-            if train["aimed_departure_time"] == departure_time:
-                return train, data["station_name"]
-
-    return {"train_uid": ''}, ''
+    try:
+        with urllib.request.urlopen(address) as url:
+            data = json.loads(url.read().decode())
+            for train in data["departures"]["all"]:
+                if train["aimed_departure_time"] == departure_time:
+                    return train, data["station_name"]
+            return {"train_uid": ''}, ''
+    except (ValueError, JSONDecodeError):
+        return {"train_uid": ''}, ''
 
 
 @app.route('/')
