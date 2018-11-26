@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
+import json
 import sqlite3
+import time
+import urllib.request
 from datetime import datetime, timedelta
 from json import JSONDecodeError
+from urllib.error import HTTPError, URLError
 
 import pytz
 from flask import Flask, g, render_template, request, redirect
-
-import urllib.request
-import json
-import time
 
 from common import mac_int_to_str, mac_str_to_int
 
@@ -126,14 +126,13 @@ def determine_color(uk_time):
 
 
 def get_train_details():
-    if not TRANSPORT_APP_KEY or not TRANSPORT_APP_ID or not FAVOURITE_STATION:
+    if not (TRANSPORT_APP_KEY and TRANSPORT_APP_ID and FAVOURITE_STATION):
         return {"train_uid": ''}, ''
     address = "http://transportapi.com/v3/uk/train/station/{}/live.json?" \
               "app_id={}&app_key={}&darwin=false&train_status=passenger".format(
         FAVOURITE_STATION,
         TRANSPORT_APP_ID,
         TRANSPORT_APP_KEY)
-    print (address)
 
     # If there's no global departure time set it to now
     if not DEPARTURE_TIME:
@@ -148,7 +147,7 @@ def get_train_details():
                 if train["aimed_departure_time"] == departure_time:
                     return train, data["station_name"]
             return {"train_uid": ''}, ''
-    except (ValueError, JSONDecodeError):
+    except (ValueError, JSONDecodeError, HTTPError, URLError):
         return {"train_uid": ''}, ''
 
 
