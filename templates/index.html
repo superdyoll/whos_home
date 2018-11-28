@@ -1,196 +1,223 @@
 <!doctype html>
 <html>
-	<head>
-		<title>Who's in?</title>
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous" />
-		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"> </script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-		<script>
-// Refresh every 2 mins
-$(document).ready(function(){
-setTimeout(function(){location.reload()},1000*60*2)
+<head>
+    <title>Who's in?</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"/>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script>
+        // Refresh every 2 mins
+        $(document).ready(function () {
+            setTimeout(function () {
+                location.reload()
+            }, 1000 * 60 * 2)
 
-{% if harmony_domain %}
-var domain = "{{harmony_domain}}";
-$('#watch-a-movie').click(function(){
-	$.ajax({
-		type: 'POST',
-		url: domain+"hubs/harmony-hub/activities/watch-a-movie",
-		data: {},
-	});
-});
-$('#off').click(function(){
-	$.ajax({
-		type: 'PUT',
-		url: domain+"hubs/harmony-hub/off",
-		data: {},
-	});
-});
-{% endif %}
+            {% if harmony_domain %}
+                var domain = "{{harmony_domain}}";
+                $('#watch-a-movie').click(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: domain + "hubs/harmony-hub/activities/watch-a-movie",
+                        data: {},
+                    });
+                });
+                $('#off').click(function () {
+                    $.ajax({
+                        type: 'PUT',
+                        url: domain + "hubs/harmony-hub/off",
+                        data: {},
+                    });
+                });
+            {% endif %}
 
-});
-		</script>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}" />
-	</head>
-	<body>
-		<div class="bg">
-			<div class="container">
-				<div class="row">
-					<div class="col-auto">
-						<h1 class="border top-row">Who's In?</h1>
-						<h4 class="border top-row">Named devices</h4>
-					</div>
-					{% if note['note'] %}
-					<div class="col">
-						<!-- PADDING -->
-					</div>
-					<div class="col-auto">
-						<div class="card top-row">
-							<div class="card-header thin-card">Note<span class="text-muted"> - Written {{note['pretty_date']}}</span></div>
-							<div class="card-body thin-card">	
-								<p class="card-text">{{note['note']}}</p>
-							</div>
-						</div>
-					</div>
-					{% endif %}
-				
-				</div>
-				<div class="row justify-content-center">
-	  {% for dev in named_devices %}
-					<div class="col-auto col-card">
-						<div class="card {{dev['color']}} background" style="width: 12rem;">
-							<div class="card-body">
-								<h5 class="card-title">{{dev['name']}}</h5>
-								<h6 class="card-subtitle mb-2 text-muted">{{dev['pretty_lastseen']}}</h6>
-								<p class="card-text">{{dev['lastseen']}}</p>
-							</div>
-						</div>
-					</div>
-	  {% endfor %}
-				</div>
-				<div class="row">
-					<div class="col-auto" align="center" id="btnOther">
-						<p>
-							<button style="margin: 5px 10px;" class="btn btn-primary" type="button" data-toggle="collapse" data-target=".tools-collapse" aria-expanded="false" aria-controls="devicesPanel addPanel removePanel">
-								Other devices
-							</button>
-							<br />
-							<button class="btn btn-success" type="button" data-toggle="collapse" data-target=".edit-note" aria-expanded="false" aria-controls="notesPanel">
-								Edit Note
-							</button>
-						</p>
-					</div>
-					{% if harmony_domain %}
-					<div class="col-auto">
-						<div class="card">
-							<div class="card-header thin-card">Harmony Controls</div>
-							<div class="card-body thin-card">
-								<button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
-								<button class="btn btn-secondary" id="off">Off</button>
-							</div>
-						</div>
-					</div>
-				{% endif %}
-					<div class="col" align="right">
-						<!-- Weather provided by wunderground -->
-						<span style="display: block !important; width: 320px; text-align: center; font-family: sans-serif; font-size: 12px;">
-							<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity={{city}}&ForcedState={{country}}&wmo=03874&language=EN" alt="Find more about Weather in {{city}}, {{country}}" width="300" />
+        });
+    </script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+</head>
+<body>
+<div class="bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-auto">
+                <h1 class="border top-row">Who's In?</h1>
+            </div>
+            {% if train['train_uid'] %}
+                <div class="col">
+                    <!-- PADDING -->
+                </div>
+                <div class="col-auto">
+                    <div class="card top-row train {{ "train-" + train['status'].replace(' ','-').lower() }}">
+                        <div class="card-header thin-card">{{ station_name }} - {{ train['aimed_departure_time'] }}</div>
+                        <div class="card-body thin-card">
+                            <p class="card-text">{{ train['status'] }} - {{ train['expected_departure_time'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if note['note'] %}
+                <div class="col">
+                    <!-- PADDING -->
+                </div>
+                <div class="col-auto">
+                    <div class="card top-row">
+                        <div class="card-header thin-card">Note<span
+                                class="text-muted"> - {{ note['pretty_date'] }}</span>
+                        </div>
+                        <div class="card-body thin-card">
+                            <p class="card-text">{{ note['note'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="row justify-content-center">
+            {% for dev in named_devices %}
+                <div class="col-auto col-card">
+                    <div class="card {{ dev['color'] }} background" style="width: 12rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ dev['name'] }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ dev['pretty_lastseen'] }}</h6>
+                            <p class="card-text">{{ dev['lastseen'] }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <div class="col-auto" align="center" id="btnOther">
+                <p>
+                    <button style="margin: 5px 10px;" class="btn btn-primary" type="button" data-toggle="collapse"
+                            data-target=".tools-collapse" aria-expanded="false"
+                            aria-controls="devicesPanel addPanel removePanel">
+                        Other devices
+                    </button>
+                    <br/>
+                    <button class="btn btn-success" type="button" data-toggle="collapse" data-target=".edit-note"
+                            aria-expanded="false" aria-controls="notesPanel">
+                        Edit Note
+                    </button>
+                </p>
+            </div>
+            {% if harmony_domain %}
+                <div class="col-auto">
+                    <div class="card">
+                        <div class="card-header thin-card">Harmony Controls</div>
+                        <div class="card-body thin-card">
+                            <button class="btn btn-primary" id="watch-a-movie">Watch a movie</button>
+                            {#                            todo: Make the off button work #}
+                            {#                            <button class="btn btn-secondary" id="off">Off</button>#}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col" align="right">
+                <!-- Weather provided by wunderground -->
+                <span style="display: block !important; width: 320px; text-align: center; font-family: sans-serif; font-size: 12px;">
+							<img src="http://weathersticker.wunderground.com/weathersticker/cgi-bin/banner/ban/wxBanner?bannertype=wu_clean2day_metric_cond&airportcode=EGKA&ForcedCity={{ city }}&ForcedState={{ country }}&wmo=03874&language=EN"
+                                 alt="Find more about Weather in {{ city }}, {{ country }}" width="300"/>
 						</span>
-					</div>
-				</div>
-				<br class="collapse edit-note"/>
-				<div class="row">
-					<div class="col">
-						<div class="collapse edit-note" id="notesPanel">
-							<div class="card bg-light mb-3">
-								<div class="card-header">Edit Note</div>
-								<div class="card-body">
-									<form action="/edit_note" method="post">
-										<div class="form-group row">
-											<label for="note" class="col-sm-2 col-form-label">Note</label> 
-											<div class="col-sm-10">
-												<input type="text" name="note" id="note" class="form-control" value="{% if note %}{{note['note']}}{% endif %}" />
-											</div>
-										</div>
-										<input type="submit" value="Submit" class="btn btn-primary pull-right"/>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<br class="collapse tools-collapse"/>
-				<div class ="row">
-					<div class="col">
-						<div class="collapse tools-collapse" id="devicesPanel">
-							<div class="card card-body">
-								<table>
-									<tr>
-										<th>Name</th>
-										<th>MAC</th>
-										<th>Last seen</th>
-										<th>Date</th>
-									</tr>
-				{% for dev in devices %}
-									<tr class="{{dev['color']}}">
-										<td>{{dev['description']}}</td>
-										<td>{{dev['mac']}}</td>
-										<td>{{dev['pretty_lastseen']}}</td>
-										<td>{{dev['lastseen']}}</td>
-									</tr>
-				{% endfor %}
-								</table>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col">
-						<div class="collapse tools-collapse" id="addPanel">
-							<div class="card bg-light mb-3">
-								<div class="card-header">Name a device </div>
-								<div class="card-body">
-									<form action="/name_device" method="post">
-										<div class="form-group row">
-											<label for="addMac" class="col-sm-2 col-form-label">Mac</label>
-											<div class="col-sm-10">
-												<input type="text" name="mac" id="addMac" class="form-control"/>
-											</div>
-										</div>
-										<div class="form-group row">
-											<label for="addName" class="col-sm-2 col-form-label">Name</label>
-											<div class="col-sm-10">
-												<input type="text" name="name" id="addName" class="form-control"/>
-											</div>
-										</div>
-										<input type="submit" value="Submit" class="btn btn-primary pull-right" />
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col">
-						<div class="collapse tools-collapse" id="removePanel">
-							<div class="card bg-light mb-3">
-								<div class="card-header">Remove a device</div>
-								<div class="card-body">
-									<form action="/remove_device" method="post">
-										<div class="form-group row">
-											<label for="removeName" class="col-sm-2 col-form-label">Name</label> 
-											<div class="col-sm-10">
-												<input type="text" name="name" id="removeName" class="form-control"/>
-											</div>
-										</div>
-										<input type="submit" value="Submit" class="btn btn-primary pull-right"/>
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</body>
+            </div>
+        </div>
+        <br class="collapse edit-note"/>
+        <div class="row">
+            <div class="col">
+                <div class="collapse edit-note" id="notesPanel">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header">Edit Note</div>
+                        <div class="card-body">
+                            <form action="/edit_note" method="post">
+                                <div class="form-group row">
+                                    <label for="note" class="col-sm-2 col-form-label">Note</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="note" id="note" class="form-control"
+                                               value="{% if note %}{{ note['note'] }}{% endif %}"/>
+                                    </div>
+                                </div>
+                                <input type="submit" value="Submit" class="btn btn-primary pull-right"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br class="collapse tools-collapse"/>
+        <div class="row">
+            <div class="col">
+                <div class="collapse tools-collapse" id="devicesPanel">
+                    <div class="card card-body">
+                        <table>
+                            <tr>
+                                <th>Name</th>
+                                <th>MAC</th>
+                                <th>Last seen</th>
+                                <th>Date</th>
+                            </tr>
+                            {% for dev in devices %}
+                                <tr class="{{ dev['color'] }}">
+                                    <td>{{ dev['description'] }}</td>
+                                    <td>{{ dev['mac'] }}</td>
+                                    <td>{{ dev['pretty_lastseen'] }}</td>
+                                    <td>{{ dev['lastseen'] }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <div class="collapse tools-collapse" id="addPanel">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header">Name a device</div>
+                        <div class="card-body">
+                            <form action="/name_device" method="post">
+                                <div class="form-group row">
+                                    <label for="addMac" class="col-sm-2 col-form-label">Mac</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="mac" id="addMac" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="addName" class="col-sm-2 col-form-label">Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="name" id="addName" class="form-control"/>
+                                    </div>
+                                </div>
+                                <input type="submit" value="Submit" class="btn btn-primary pull-right"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="collapse tools-collapse" id="removePanel">
+                    <div class="card bg-light mb-3">
+                        <div class="card-header">Remove a device</div>
+                        <div class="card-body">
+                            <form action="/remove_device" method="post">
+                                <div class="form-group row">
+                                    <label for="removeName" class="col-sm-2 col-form-label">Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" name="name" id="removeName" class="form-control"/>
+                                    </div>
+                                </div>
+                                <input type="submit" value="Submit" class="btn btn-primary pull-right"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
 </html>
 
