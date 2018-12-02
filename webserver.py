@@ -2,11 +2,13 @@
 import json
 import sqlite3
 import time
+
 try:
     import urllib.request as urlrequest
 except (TypeError, ImportError):
     import urllib2 as urlrequest
 from datetime import datetime, timedelta
+
 try:
     from urllib.error import HTTPError, URLError
 except (TypeError, ImportError):
@@ -146,12 +148,13 @@ def get_train_details():
         departure_time = DEPARTURE_TIME
 
     try:
-        with urlrequest.urlopen(address) as url:
-            data = json.loads(url.read().decode())
-            for train in data["departures"]["all"]:
-                if train["aimed_departure_time"] == departure_time:
-                    return train, data["station_name"]
-            return {"train_uid": ''}, ''
+        url = urlrequest.urlopen(address)
+        data = json.loads(url.read().decode())
+        url.close()
+        for train in data["departures"]["all"]:
+            if train["aimed_departure_time"] == departure_time:
+                return train, data["station_name"]
+        return {"train_uid": ''}, ''
     except (ValueError, HTTPError, URLError):
         return {"train_uid": ''}, ''
 
