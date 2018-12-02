@@ -5,12 +5,12 @@ import time
 try:
     import urllib.request as urlrequest
 except (TypeError, ImportError):
-    import urllib as urlrequest
+    import urllib2 as urlrequest
 from datetime import datetime, timedelta
 try:
     from urllib.error import HTTPError, URLError
 except (TypeError, ImportError):
-    from urllib import HTTPError, URLError
+    from urllib2 import HTTPError, URLError
 
 import pytz
 from flask import Flask, g, render_template, request, redirect
