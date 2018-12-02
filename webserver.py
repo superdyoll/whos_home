@@ -4,12 +4,12 @@ import sqlite3
 import time
 try:
     import urllib.request as urlrequest
-except TypeError:
+except (TypeError, ImportError):
     import urllib as urlrequest
 from datetime import datetime, timedelta
 try:
     from urllib.error import HTTPError, URLError
-except TypeError:
+except (TypeError, ImportError):
     from urllib import HTTPError, URLError
 
 import pytz
