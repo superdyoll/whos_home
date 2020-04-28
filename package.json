@@ -1,0 +1,26 @@
+{
+  "name": "whos_home",
+  "version": "1.0.0",
+  "description": "Who's Home module for Magic Mirror",
+  "main": "whos_home.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Adimote/whos_home.git"
+  },
+  "keywords": [
+    "MagicMirror",
+    "WhosHome"
+  ],
+  "author": "Adimote & superdyoll",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/superdyoll/whos_home/issues"
+  },
+  "homepage": "https://github.com/superdyoll/whos_home#readme",
+  "dependencies": {
+    "sqlite": "^4.0.7"
+  }
+}
