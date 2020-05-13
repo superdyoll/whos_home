@@ -1,9 +1,9 @@
-var prettydate = require("pretty-date");
-
 Module.register("whos_home", {
 	defaults: {
 		updateInterval: 1 * 60 * 1000, // every 1 minute
-		database: "./whos_home.db"
+		fade: true,
+		fadePoint: 0.25, // Start on 1/4th of the list.
+		database: "./modules/whos_home/whos_home.db"
 	},
 
 	named_devices: null,
@@ -23,20 +23,43 @@ Module.register("whos_home", {
 	socketNotificationReceived: function (notification, payload) {
 		if (notification === "STATUS") {
 			this.named_devices = payload;
-			self.updateDom(2);
+			this.updateDom(2);
 		}
 	},
 
 	// Override dom generator.
 	getDom: function() {
-		var wrapper = document.createElement("div");
+		var wrapper = document.createElement("table");
+
 		if (this.named_devices){
-			this.named_devices.forEach((row) => {
-				console.log(row.name);
-				var device = document.createElement("p");
-				device.className = "small bright";
-				device.innerHTML(row.name + " Last seen " + prettydate.format(new Date(row.unixdate * 1000)));
+			if (this.config.fade && this.config.fadePoint < 1) {
+				if (this.config.fadePoint < 0) {
+					this.config.fadePoint = 0;
+				}
+				var startFade = this.named_devices.length * this.config.fadePoint;
+				var fadeSteps = this.named_devices.length - startFade;
+			}
+
+			var currentFadeStep = 0;
+
+			this.named_devices.sort((a,b) => new Date(b.lastSeen) - new Date(a.lastSeen));
+			this.named_devices.forEach((row, e) => {
+				var device = document.createElement("tr");
+				device.className = "normal small";
+				var name = document.createElement("td");
+				name.className = "bright regular";
+				name.innerHTML = row.name;
+				device.appendChild(name);
+				var seen = document.createElement("td");
+				seen.className = "thin";
+				seen.innerHTML = " Last seen " + row.prettySeen;
+				device.appendChild(seen);
 				wrapper.appendChild(device);
+
+				if (e >= startFade) {			//fading
+					currentFadeStep = e - startFade;
+					device.style.opacity = 1 - (1 / fadeSteps * currentFadeStep);
+				}
 			});
 		}
 		return wrapper;
