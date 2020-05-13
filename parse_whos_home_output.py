@@ -100,6 +100,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--create_db", action='store_true')
     parser.add_argument("--database", "-d", default="whos_home.db")
-    parser.add_argument("--migrate", "-m", default="false")
+    parser.add_argument("--migrate", "-m", default=False)
     args = parser.parse_args()
     main(args.database, args.create_db, args.migrate)

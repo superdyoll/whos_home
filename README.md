@@ -16,6 +16,15 @@ source venv/bin/activate
 pip install Flask pytz
 ```
 
-set up a CRON job to run `sudo ./whos_home.sh | python parse_whos_home_output.py` every 5 minutes or so.
+Edit the root crontab (nmap requires to be run with root permission to get mac addresses) and add:
+```bash
+*/5 * * * * /home/<username>/whos_home.sh | /home/<username>/whos_home/parse_whos_home_output.py
+```
+To update the database every 5 minutes, If you have a faster processor you could do it every minute. Make sure the full paths to the scripts are correct.
 
-start the flask server with `export FLASK_APP=webserver.py; python -m flask run`
+Start the flask server with `export FLASK_APP=webserver.py; python -m flask run`
+
+# Magic Mirror Module
+Also included in this repository is a Magic Mirror module. To include it in your mirror add this repository to the modules of your mirror and then include it as normal.
+
+When you want to add new devices you'll need to run up the flask server and connect via a web browser to but once the devices are added as long as the cron job is running they will be updated.
