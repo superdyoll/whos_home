@@ -21,6 +21,10 @@
   },
   "homepage": "https://github.com/superdyoll/whos_home#readme",
   "dependencies": {
-    "sqlite": "^4.0.7"
+    "pretty-date": "^0.2.0",
+    "sqlite3": "^4.2.0"
+  },
+  "devDependencies": {
+    "electron-rebuild": "^1.10.1"
   }
 }
